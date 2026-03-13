@@ -1,7 +1,16 @@
 var DATA = RAW_DATA.slice();
 var newWords = [];
-var showAI = true;
 
+function sheetClass(s) {
+  var map = {
+    'KRAFTON':'st-krafton','Finance':'st-finance','M&A':'st-manda',
+    'Legal':'st-legal','Pharma':'st-pharma','Government':'st-government',
+    'Technology':'st-technology','Aesthetic Surgery ':'st-aesthetic',
+    'Entertainment':'st-entertainment','AD_MKT':'st-admkt',
+    'Rocket Now':'st-rocketnow','Genarative AI':'st-genai'
+  };
+  return map[s] || 'st-default';
+}
 function esc(s) {
   if (!s) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -28,24 +37,20 @@ function score(d, q) {
   return 0;
 }
 function renderCard(d, q) {
-  var aiJa = d.ai_ja && showAI;
-  var aiEn = d.ai_en && showAI;
-  var aiKo = d.ai_ko && showAI;
-  var hasAI = (d.ai_ja || d.ai_en || d.ai_ko);
+
   var memo = [d.memo, d.memo2].filter(Boolean).join(' · ');
-  var jaText = (d.ai_ja && !showAI) ? '<span style="color:#c7c7cc">—</span>' : (hi(d.ja, q) || '<span style="color:#c7c7cc">—</span>');
-  var enText = (d.ai_en && !showAI) ? '<span style="color:#c7c7cc">—</span>' : (hi(d.en, q) || '<span style="color:#c7c7cc">—</span>');
-  var koText = (d.ai_ko && !showAI) ? '<span style="color:#c7c7cc">—</span>' : (hi(d.ko, q) || '<span style="color:#c7c7cc">—</span>');
+  var jaText = hi(d.ja, q) || '<span style="color:#c7c7cc">—</span>';
+  var enText = hi(d.en, q) || '<span style="color:#c7c7cc">—</span>';
+  var koText = hi(d.ko, q) || '<span style="color:#c7c7cc">—</span>';
   return '<div class="card">' +
     '<div class="card-header">' +
-      '<span class="sheet-tag">' + esc(d.sheet) + '</span>' +
+      '<span class="sheet-tag ' + sheetClass(d.sheet) + '">' + esc(d.sheet) + '</span>' +
       '<span class="type-tag">' + esc(d.category || '') + '</span>' +
-      (hasAI && showAI ? '<span class="ai-dot" title="AI번역 포함"></span>' : '') +
     '</div>' +
     '<div class="langs">' +
-      '<div class="lang-box"><div class="lang-label">JA</div><div class="lang-text' + (aiJa ? ' ai' : '') + '">' + jaText + '</div></div>' +
-      '<div class="lang-box"><div class="lang-label">EN</div><div class="lang-text' + (aiEn ? ' ai' : '') + '">' + enText + '</div></div>' +
-      '<div class="lang-box"><div class="lang-label">KO</div><div class="lang-text' + (aiKo ? ' ai' : '') + '">' + koText + '</div></div>' +
+      '<div class="lang-box"><div class="lang-label">JA</div><div class="lang-text">' + jaText + '</div></div>' +
+      '<div class="lang-box"><div class="lang-label">EN</div><div class="lang-text">' + enText + '</div></div>' +
+      '<div class="lang-box"><div class="lang-label">KO</div><div class="lang-text">' + koText + '</div></div>' +
     '</div>' +
     (memo ? '<div class="memo-row">📝 ' + hi(memo, q) + '</div>' : '') +
   '</div>';
@@ -145,14 +150,6 @@ window.addEventListener('popstate', function(e) {
 document.getElementById('searchInput').addEventListener('input', doSearch);
 document.getElementById('searchInput').addEventListener('keydown', function(e){if(e.key==='Escape')clearSearch();});
 
-function toggleAI() {
-  showAI = !showAI;
-  var btn = document.getElementById('aiToggleBtn');
-  btn.textContent = showAI ? 'AI표시 ON' : 'AI표시 OFF';
-  btn.classList.toggle('off', !showAI);
-  var q = document.getElementById('searchInput').value.trim();
-  if (q) doSearch(); else showHome();
-}
 function openModal() { document.getElementById('modalOverlay').classList.add('active'); }
 function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
 

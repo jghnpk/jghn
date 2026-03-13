@@ -151,7 +151,7 @@ mark{background:#ffd6da;border-radius:2px;padding:0 1px}
     </div>
   </div>
   <div class="header-row2">
-    <span class="update-info" id="updateInfo">2026-03-13 15:28 JST</span>
+    <span class="update-info" id="updateInfo">2026-03-13 15:45 JST</span>
   </div>
 </header>
 
@@ -231,12 +231,29 @@ function score(d, q) {
   var ql = q.toLowerCase();
   var fields = [d.ja, d.en, d.ko];
   var memoFields = [d.memo, d.memo2, d.category];
+  // 6: 전체 일치
   for (var i = 0; i < fields.length; i++) {
-    if (fields[i] && fields[i].toLowerCase() === ql) return 3;
+    if (fields[i] && fields[i].toLowerCase() === ql) return 6;
   }
+  // 5: 앞부분 일치 (startsWith)
   for (var i = 0; i < fields.length; i++) {
-    if (fields[i] && fields[i].toLowerCase().indexOf(ql) >= 0) return 2;
+    if (fields[i] && fields[i].toLowerCase().indexOf(ql) === 0) return 5;
   }
+  // 4: 단어 경계 일치 (공백 뒤에 시작)
+  for (var i = 0; i < fields.length; i++) {
+    if (fields[i]) {
+      var fl = fields[i].toLowerCase();
+      var idx = fl.indexOf(ql);
+      if (idx > 0 && fl[idx-1] === ' ') return 4;
+    }
+  }
+  // 3: 임의 위치 포함
+  for (var i = 0; i < fields.length; i++) {
+    if (fields[i] && fields[i].toLowerCase().indexOf(ql) >= 0) return 3;
+  }
+  // 2: 카테고리 일치
+  if (d.category && d.category.toLowerCase().indexOf(ql) >= 0) return 2;
+  // 1: 메모 포함
   for (var i = 0; i < memoFields.length; i++) {
     if (memoFields[i] && memoFields[i].toLowerCase().indexOf(ql) >= 0) return 1;
   }

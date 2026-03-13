@@ -12,7 +12,7 @@ API_KEY  = os.environ['API_KEY']
 SHEET_TABS = [
     'KRAFTON', 'Finance', 'M&A', 'Legal', 'Pharma',
     'Government', 'Technology', 'Aesthetic Surgery ',
-    'Entertainment', 'AD  MKT', 'Rocket Now', 'Genarative AI'
+    'Entertainment', 'AD_MKT', 'Rocket Now', 'Genarative AI'
 ]
 
 # 컬럼명 후보 (대소문자 변형 대응)
@@ -23,6 +23,9 @@ COL = {
     'memo':     ['Memo', 'memo', 'MEMO'],
     'category': ['Category', 'category'],
     'type':     ['Type', 'type'],
+    'ai_ja':    ['ai_ja'],
+    'ai_en':    ['ai_en'],
+    'ai_ko':    ['ai_ko'],
 }
 
 def find_col(row, cands):
@@ -64,6 +67,9 @@ def process_rows(tab_name, rows):
         if not ja and not en and not ko:
             continue
 
+        def to_bool(v):
+            return str(v).strip().upper() in ('TRUE', '1', 'YES')
+
         entry = {
             'sheet':    tab_name,
             'type':     str(find_col(row, COL['type'])).strip(),
@@ -73,9 +79,9 @@ def process_rows(tab_name, rows):
             'category': str(find_col(row, COL['category'])).strip(),
             'memo':     str(find_col(row, COL['memo'])).strip(),
             'memo2':    '',
-            'ai_ja':    False,
-            'ai_en':    False,
-            'ai_ko':    False,
+            'ai_ja':    to_bool(find_col(row, COL['ai_ja'])),
+            'ai_en':    to_bool(find_col(row, COL['ai_en'])),
+            'ai_ko':    to_bool(find_col(row, COL['ai_ko'])),
         }
         result.append(entry)
     return result

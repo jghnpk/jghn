@@ -153,38 +153,6 @@ function toggleAI() {
   var q = document.getElementById('searchInput').value.trim();
   if (q) doSearch(); else showHome();
 }
-  var file = input.files[0]; if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      var wb = XLSX.read(e.target.result, {type:'binary'});
-      var nd = [];
-      wb.SheetNames.forEach(function(sn) {
-        var ws = wb.Sheets[sn];
-        var rows = XLSX.utils.sheet_to_json(ws, {defval:''});
-        if (!rows.length) return;
-        function fc(row, cands) { for (var i=0;i<cands.length;i++) if (cands[i] in row) return cands[i]; return null; }
-        rows.forEach(function(row) {
-          var jk=fc(row,['JA','ja']),ek=fc(row,['EN','en']),kk=fc(row,['KO','ko']),
-              mk=fc(row,['Memo','memo','MEMO']),ck=fc(row,['Category','category']),tk=fc(row,['Type','type']);
-          var ja=jk?String(row[jk]||'').trim():'',en=ek?String(row[ek]||'').trim():'',ko=kk?String(row[kk]||'').trim():'';
-          if (!ja&&!en&&!ko) return;
-          nd.push({sheet:sn,type:tk?String(row[tk]||''):'',ja:ja,en:en,ko:ko,
-            category:ck?String(row[ck]||''):'',memo:mk?String(row[mk]||''):'',memo2:'',
-            ai_ja:false,ai_en:false,ai_ko:false});
-        });
-      });
-      DATA = nd;
-      var now = new Date().toLocaleString('ko-KR',{timeZone:'Asia/Seoul'});
-      document.getElementById('updateInfo').textContent = now + ' (xlsx)';
-      try { localStorage.setItem('pepperUpdateTime', now + ' (xlsx)'); } catch(e) {}
-      showHome();
-      alert('✅ 업데이트 완료! ' + nd.length + '개 단어');
-    } catch(err) { alert('오류: ' + err.message); }
-    input.value = '';
-  };
-  reader.readAsBinaryString(file);
-}
 function openModal() { document.getElementById('modalOverlay').classList.add('active'); }
 function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
 
@@ -225,16 +193,7 @@ function removeWord(i) {
   DATA = DATA.filter(function(d){return d!==w;});
   renderNewWords();
 }
-  var csv = 'Sheet,JA,EN,KO,Memo\n' + newWords.map(function(w) {
-    return [w.sheet,w.ja,w.en,w.ko,w.memo].map(function(v){return '"'+String(v||'').replace(/"/g,'""')+'"';}).join(',');
-  }).join('\n');
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
-  a.download = 'Pepper_NewWords_' + new Date().toISOString().slice(0,10) + '.csv';
-  a.click();
-  var el = document.getElementById('exportNotice'); el.style.display='block';
-  el.textContent = '✅ ' + newWords.length + '개 CSV 내보내기 완료!';
-}
+
 
 try {
   var saved = localStorage.getItem('pepperUpdateTime');

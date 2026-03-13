@@ -1,0 +1,247 @@
+var DATA = RAW_DATA.slice();
+var newWords = [];
+var showAI = true;
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function hi(text, q) {
+  if (!q || !text) return esc(text);
+  var re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')','gi');
+  return esc(text).replace(re,'<mark>$1</mark>');
+}
+function score(d, q) {
+  if (!q) return 0;
+  var ql = q.toLowerCase();
+  var fields = [d.ja, d.en, d.ko];
+  var memoFields = [d.memo, d.memo2, d.category];
+  for (var i = 0; i < fields.length; i++) {
+    if (fields[i] && fields[i].toLowerCase() === ql) return 3;
+  }
+  for (var i = 0; i < fields.length; i++) {
+    if (fields[i] && fields[i].toLowerCase().indexOf(ql) >= 0) return 2;
+  }
+  for (var i = 0; i < memoFields.length; i++) {
+    if (memoFields[i] && memoFields[i].toLowerCase().indexOf(ql) >= 0) return 1;
+  }
+  return 0;
+}
+function renderCard(d, q) {
+  var aiJa = d.ai_ja && showAI;
+  var aiEn = d.ai_en && showAI;
+  var aiKo = d.ai_ko && showAI;
+  var hasAI = (d.ai_ja || d.ai_en || d.ai_ko);
+  var memo = [d.memo, d.memo2].filter(Boolean).join(' · ');
+  var jaText = (d.ai_ja && !showAI) ? '<span style="color:#c7c7cc">—</span>' : (hi(d.ja, q) || '<span style="color:#c7c7cc">—</span>');
+  var enText = (d.ai_en && !showAI) ? '<span style="color:#c7c7cc">—</span>' : (hi(d.en, q) || '<span style="color:#c7c7cc">—</span>');
+  var koText = (d.ai_ko && !showAI) ? '<span style="color:#c7c7cc">—</span>' : (hi(d.ko, q) || '<span style="color:#c7c7cc">—</span>');
+  return '<div class="card">' +
+    '<div class="card-header">' +
+      '<span class="sheet-tag">' + esc(d.sheet) + '</span>' +
+      '<span class="type-tag">' + esc(d.category || '') + '</span>' +
+      (hasAI && showAI ? '<span class="ai-dot" title="AI번역 포함"></span>' : '') +
+    '</div>' +
+    '<div class="langs">' +
+      '<div class="lang-box"><div class="lang-label">JA</div><div class="lang-text' + (aiJa ? ' ai' : '') + '">' + jaText + '</div></div>' +
+      '<div class="lang-box"><div class="lang-label">EN</div><div class="lang-text' + (aiEn ? ' ai' : '') + '">' + enText + '</div></div>' +
+      '<div class="lang-box"><div class="lang-label">KO</div><div class="lang-text' + (aiKo ? ' ai' : '') + '">' + koText + '</div></div>' +
+    '</div>' +
+    (memo ? '<div class="memo-row">📝 ' + hi(memo, q) + '</div>' : '') +
+  '</div>';
+}
+function getRandom10() {
+  var arr = DATA.slice();
+  for (var i = arr.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr.slice(0, 10);
+}
+function sheetKey(s) {
+  return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+}
+function showHome(fromPop) {
+  if (!fromPop) history.pushState({view:'home'}, '');
+  var seen = {};
+  var uniq = [];
+  for (var i = 0; i < DATA.length; i++) {
+    var s = DATA[i].sheet;
+    if (!seen[s]) { seen[s] = 0; uniq.push(s); }
+    seen[s]++;
+  }
+  var random10 = getRandom10();
+  var gridHtml = '<div class="home-grid">';
+  for (var i = 0; i < uniq.length; i++) {
+    var s = uniq[i];
+    gridHtml += '<div class="sheet-card" onclick="showSheet(\'' + sheetKey(s) + '\')">' +
+      '<div class="sheet-name">' + esc(s) + '</div>' +
+      '<div class="sheet-count">' + seen[s] + '개</div></div>';
+  }
+  gridHtml += '</div>';
+  var cardsHtml = '';
+  for (var i = 0; i < random10.length; i++) {
+    cardsHtml += renderCard(random10[i], '');
+  }
+  document.getElementById('main').innerHTML =
+    gridHtml +
+    '<div class="section-hd">' +
+      '<span>오늘의 단어 10</span>' +
+      '<button class="refresh-btn" onclick="showHome()">🔀 새로고침</button>' +
+    '</div>' +
+    cardsHtml;
+}
+function showSheet(name, fromPop) {
+  if (!fromPop) history.pushState({view:'sheet', name:name}, '');
+  var items = [];
+  for (var i = 0; i < DATA.length; i++) {
+    if (DATA[i].sheet === name) items.push(DATA[i]);
+  }
+  var cardsHtml = '';
+  for (var i = 0; i < items.length; i++) {
+    cardsHtml += renderCard(items[i], '');
+  }
+  document.getElementById('main').innerHTML =
+    '<button class="back-btn" onclick="showHome()">← 홈으로</button>' +
+    '<div class="sheet-title">' + esc(name) + ' <span style="font-size:13px;color:#8e8e93;font-weight:400">' + items.length + '개</span></div>' +
+    cardsHtml;
+}
+function doSearch() {
+  var q = document.getElementById('searchInput').value.trim();
+  document.getElementById('searchClear').style.display = q ? 'block' : 'none';
+  if (!q) { showHome(); return; }
+  var scored = [];
+  for (var i = 0; i < DATA.length; i++) {
+    var s = score(DATA[i], q);
+    if (s > 0) scored.push({d: DATA[i], s: s});
+  }
+  scored.sort(function(a,b){return b.s - a.s;});
+  var main = document.getElementById('main');
+  if (!scored.length) {
+    main.innerHTML = '<div class="no-results"><div class="icon">🔍</div><p>"' + esc(q) + '"에 대한 결과 없음</p></div>';
+    return;
+  }
+  var html = '<div class="result-count">' + scored.length + '개 결과</div>';
+  for (var i = 0; i < scored.length; i++) html += renderCard(scored[i].d, q);
+  main.innerHTML = html;
+}
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchClear').style.display = 'none';
+  showHome();
+}
+window.addEventListener('popstate', function(e) {
+  var s = e.state;
+  if (!s || s.view === 'home') {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchClear').style.display = 'none';
+    showHome(true);
+  } else if (s.view === 'sheet') {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchClear').style.display = 'none';
+    showSheet(s.name, true);
+  }
+});
+document.getElementById('searchInput').addEventListener('input', doSearch);
+document.getElementById('searchInput').addEventListener('keydown', function(e){if(e.key==='Escape')clearSearch();});
+
+function toggleAI() {
+  showAI = !showAI;
+  var btn = document.getElementById('aiToggleBtn');
+  btn.textContent = showAI ? 'AI표시 ON' : 'AI표시 OFF';
+  btn.classList.toggle('off', !showAI);
+  var q = document.getElementById('searchInput').value.trim();
+  if (q) doSearch(); else showHome();
+}
+  var file = input.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var wb = XLSX.read(e.target.result, {type:'binary'});
+      var nd = [];
+      wb.SheetNames.forEach(function(sn) {
+        var ws = wb.Sheets[sn];
+        var rows = XLSX.utils.sheet_to_json(ws, {defval:''});
+        if (!rows.length) return;
+        function fc(row, cands) { for (var i=0;i<cands.length;i++) if (cands[i] in row) return cands[i]; return null; }
+        rows.forEach(function(row) {
+          var jk=fc(row,['JA','ja']),ek=fc(row,['EN','en']),kk=fc(row,['KO','ko']),
+              mk=fc(row,['Memo','memo','MEMO']),ck=fc(row,['Category','category']),tk=fc(row,['Type','type']);
+          var ja=jk?String(row[jk]||'').trim():'',en=ek?String(row[ek]||'').trim():'',ko=kk?String(row[kk]||'').trim():'';
+          if (!ja&&!en&&!ko) return;
+          nd.push({sheet:sn,type:tk?String(row[tk]||''):'',ja:ja,en:en,ko:ko,
+            category:ck?String(row[ck]||''):'',memo:mk?String(row[mk]||''):'',memo2:'',
+            ai_ja:false,ai_en:false,ai_ko:false});
+        });
+      });
+      DATA = nd;
+      var now = new Date().toLocaleString('ko-KR',{timeZone:'Asia/Seoul'});
+      document.getElementById('updateInfo').textContent = now + ' (xlsx)';
+      try { localStorage.setItem('pepperUpdateTime', now + ' (xlsx)'); } catch(e) {}
+      showHome();
+      alert('✅ 업데이트 완료! ' + nd.length + '개 단어');
+    } catch(err) { alert('오류: ' + err.message); }
+    input.value = '';
+  };
+  reader.readAsBinaryString(file);
+}
+function openModal() { document.getElementById('modalOverlay').classList.add('active'); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+
+function addWord(e) {
+  e.preventDefault();
+  var w = {
+    sheet: document.getElementById('wordSheet').value,
+    ja: document.getElementById('wordJA').value.trim(),
+    en: document.getElementById('wordEN').value.trim(),
+    ko: document.getElementById('wordKO').value.trim(),
+    memo: document.getElementById('wordMemo').value.trim(),
+    category:'',type:'',memo2:'',ai_ja:false,ai_en:false,ai_ko:false
+  };
+  if (!w.ja && !w.en && !w.ko) { alert('최소 한 언어 입력 필요'); return; }
+  DATA.push(w); newWords.push(w);
+  var row = [w.ja, w.en, w.ko, w.memo].join('\t');
+  navigator.clipboard.writeText(row).then(function() {
+    var el = document.getElementById('copyNotice');
+    el.style.display = 'block';
+    el.innerHTML = '✅ 클립보드 복사 완료!<br><small style="color:#86868b">' + esc(row.replace(/\t/g,' │ ')) + '</small>';
+  }).catch(function() {
+    document.getElementById('copyNotice').style.display = 'block';
+    document.getElementById('copyNotice').textContent = '단어가 추가되었습니다.';
+  });
+  ['wordJA','wordEN','wordKO','wordMemo'].forEach(function(id){document.getElementById(id).value='';});
+  renderNewWords();
+}
+function renderNewWords() {
+  if (!newWords.length) { document.getElementById('newWordsList').innerHTML = ''; return; }
+  var html = '<div class="new-words-section"><div style="font-size:12px;font-weight:700;color:#8e8e93;margin-bottom:8px">이번 세션 추가 (' + newWords.length + '개)</div>';
+  for (var i = 0; i < newWords.length; i++) {
+    html += '<div class="new-word-item"><span style="flex:1">' + esc(newWords[i].sheet) + ' · ' + esc(newWords[i].ja||newWords[i].en||newWords[i].ko) + '</span><button onclick="removeWord(' + i + ')">✕</button></div>';
+  }
+  document.getElementById('newWordsList').innerHTML = html + '</div>';
+}
+function removeWord(i) {
+  var w = newWords[i]; newWords.splice(i,1);
+  DATA = DATA.filter(function(d){return d!==w;});
+  renderNewWords();
+}
+  var csv = 'Sheet,JA,EN,KO,Memo\n' + newWords.map(function(w) {
+    return [w.sheet,w.ja,w.en,w.ko,w.memo].map(function(v){return '"'+String(v||'').replace(/"/g,'""')+'"';}).join(',');
+  }).join('\n');
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download = 'Pepper_NewWords_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  var el = document.getElementById('exportNotice'); el.style.display='block';
+  el.textContent = '✅ ' + newWords.length + '개 CSV 내보내기 완료!';
+}
+
+try {
+  var saved = localStorage.getItem('pepperUpdateTime');
+  if (saved) document.getElementById('updateInfo').textContent = saved;
+} catch(e) {}
+history.replaceState({view:'home'}, '');
+showHome(true);
+</script>
+</body>
+</html>

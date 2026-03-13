@@ -33,10 +33,10 @@ main{max-width:680px;margin:0 auto;padding:16px 12px 80px}
 .home-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
 @media(min-width:480px){.home-grid{grid-template-columns:repeat(4,1fr)}}
 @media(min-width:680px){.home-grid{grid-template-columns:repeat(6,1fr)}}
-.sheet-card{background:#fff;border-radius:12px;padding:12px 8px;cursor:pointer;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06);border:2px solid transparent;transition:border-color 0.15s,transform 0.15s;-webkit-user-select:none}
+.sheet-card{background:#fff;border-radius:10px;padding:7px 8px;cursor:pointer;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06);border:2px solid transparent;transition:border-color 0.15s,transform 0.15s;-webkit-user-select:none}
 .sheet-card:active{transform:scale(0.96);border-color:#444}
-.sheet-name{font-weight:700;font-size:12px;color:#1c1c1e;margin-bottom:2px;word-break:keep-all}
-.sheet-count{font-size:10px;color:#8e8e93}
+.sheet-name{font-weight:700;font-size:11px;color:#1c1c1e;margin-bottom:1px;word-break:keep-all}
+.sheet-count{font-size:9px;color:#8e8e93}
 
 /* ── Section header ── */
 .section-hd{display:flex;align-items:center;gap:8px;margin-bottom:10px}

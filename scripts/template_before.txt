@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue','Noto Sans JP','Noto Sans KR',sans-serif;background:#f7f0f0;color:#1c1c1e;min-height:100vh}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue','Noto Sans JP','Noto Sans KR',sans-serif;background:#f4f4f4;color:#1c1c1e;min-height:100vh}
 
 /* ── Header ── */
 header{background:#1e1e1e;color:#fff;padding:12px 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.4)}
@@ -32,8 +32,8 @@ main{max-width:680px;margin:0 auto;padding:16px 12px 80px}
 .home-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
 @media(min-width:480px){.home-grid{grid-template-columns:repeat(4,1fr)}}
 @media(min-width:680px){.home-grid{grid-template-columns:repeat(6,1fr)}}
-.sheet-card{background:#fff;border-radius:12px;padding:12px 8px;cursor:pointer;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.07);border:2px solid transparent;transition:border-color 0.15s,transform 0.15s;-webkit-user-select:none}
-.sheet-card:active{transform:scale(0.96);border-color:#b32a3e}
+.sheet-card{background:#fff;border-radius:12px;padding:12px 8px;cursor:pointer;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06);border:2px solid transparent;transition:border-color 0.15s,transform 0.15s;-webkit-user-select:none}
+.sheet-card:active{transform:scale(0.96);border-color:#444}
 .sheet-name{font-weight:700;font-size:12px;color:#1c1c1e;margin-bottom:2px;word-break:keep-all}
 .sheet-count{font-size:10px;color:#8e8e93}
 
@@ -44,7 +44,7 @@ main{max-width:680px;margin:0 auto;padding:16px 12px 80px}
 
 /* ── Cards ── */
 .result-count{font-size:12px;color:#8e8e93;margin-bottom:10px}
-.card{background:#fff;border-radius:14px;padding:14px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,0.07)}
+.card{background:#ffffff;border-radius:14px;padding:14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
 .card-header{display:flex;align-items:center;gap:6px;margin-bottom:10px}
 .sheet-tag{font-size:10px;padding:3px 8px;border-radius:8px;font-weight:600;color:#fff}
 .st-krafton{background:#c0392b}
@@ -62,12 +62,12 @@ main{max-width:680px;margin:0 auto;padding:16px 12px 80px}
 .st-default{background:#7f8c8d}
 .type-tag{font-size:10px;color:#8e8e93;flex:1}
 .langs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.lang-box{background:#fdf5f6;border-radius:10px;padding:9px 10px}
+.lang-box{background:#f8f8f8;border-radius:10px;padding:9px 10px}
 .lang-label{font-size:9px;font-weight:700;color:#b09090;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px}
 .lang-text{font-size:13px;font-weight:500;line-height:1.35;word-break:break-word}
 .lang-text.ai{color:#b32a3e;font-style:italic}
 mark{background:#ffd6da;border-radius:2px;padding:0 1px}
-.memo-row{margin-top:8px;font-size:11px;color:#7a5558;background:#fef8f8;border-radius:8px;padding:7px 9px;line-height:1.5}
+.memo-row{margin-top:8px;font-size:11px;color:#4a5568;background:#eef2f7;border-radius:8px;padding:7px 9px;line-height:1.5}
 .no-results{text-align:center;padding:60px 20px;color:#8e8e93}
 .no-results .icon{font-size:44px;margin-bottom:10px}
 
@@ -104,22 +104,22 @@ mark{background:#ffd6da;border-radius:2px;padding:0 1px}
 
 /* ── 다크모드 ── */
 @media(prefers-color-scheme:dark){
-  body{background:#1a0d0f;color:#f5e8ea}
+  body{background:#1a1a1a;color:#f5e8ea}
   header{background:#161616;box-shadow:0 2px 12px rgba(0,0,0,0.6)}
   .logo span{color:#e07060}
-  .sheet-card{background:#2a1215;box-shadow:0 1px 4px rgba(0,0,0,0.35)}
+  .sheet-card{background:#242424;box-shadow:0 1px 4px rgba(0,0,0,0.35)}
   .sheet-name{color:#f5e8ea}
   .sheet-count{color:#8a6065}
   .sheet-card:active{border-color:#d4364e}
   .refresh-btn{border-color:#4a2228;color:#8a6065}
-  .card{background:#2a1215;box-shadow:0 1px 4px rgba(0,0,0,0.35)}
+  .card{background:#242424;box-shadow:0 1px 4px rgba(0,0,0,0.35)}
   .sheet-tag{opacity:0.85}
-  .lang-box{background:#220f12}
+  .lang-box{background:#2e2e2e}
   .lang-label{color:#7a5055}
   .lang-text{color:#f5e8ea}
   .lang-text.ai{color:#e07080}
   mark{background:#5a1520;color:#ffd6da}
-  .memo-row{background:#220f12;color:#a07078}
+  .memo-row{background:#1e2a35;color:#8aa0b8}
   .back-btn{background:#2a1215;color:#f5e8ea;box-shadow:0 1px 4px rgba(0,0,0,0.35)}
   .section-hd span{color:#7a5055}
   .modal{background:#2a1215}
@@ -143,7 +143,7 @@ mark{background:#ffd6da;border-radius:2px;padding:0 1px}
 <body>
 <header>
   <div class="header-row1">
-    <div class="logo" onclick="clearSearch()" title="홈으로">Pepper</div>
+    <div class="logo" onclick="clearSearch()" title="홈으로">Pepper Glossary</div>
     <div class="search-wrap">
       <input type="text" id="searchInput" placeholder="JA / EN / KO 검색..." autocomplete="off" autocorrect="off" spellcheck="false">
       <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>

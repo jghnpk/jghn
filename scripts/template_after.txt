@@ -1,5 +1,6 @@
 var DATA = RAW_DATA.slice();
 var newWords = [];
+var currentSheet = null;
 
 function sheetClass(s) {
   var map = {
@@ -67,6 +68,7 @@ function sheetKey(s) {
   return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
 }
 function showHome(fromPop) {
+  currentSheet = null;
   if (!fromPop) history.pushState({view:'home'}, '');
   var seen = {};
   var uniq = [];
@@ -97,6 +99,7 @@ function showHome(fromPop) {
     cardsHtml;
 }
 function showSheet(name, fromPop) {
+  currentSheet = name;
   if (!fromPop) history.pushState({view:'sheet', name:name}, '');
   var items = [];
   for (var i = 0; i < DATA.length; i++) {
@@ -114,11 +117,12 @@ function showSheet(name, fromPop) {
 function doSearch() {
   var q = document.getElementById('searchInput').value.trim();
   document.getElementById('searchClear').style.display = q ? 'block' : 'none';
-  if (!q) { showHome(); return; }
+  if (!q) { if (currentSheet) showSheet(currentSheet); else showHome(); return; }
+  var pool = currentSheet ? DATA.filter(function(d){return d.sheet===currentSheet;}) : DATA;
   var scored = [];
-  for (var i = 0; i < DATA.length; i++) {
-    var s = score(DATA[i], q);
-    if (s > 0) scored.push({d: DATA[i], s: s});
+  for (var i = 0; i < pool.length; i++) {
+    var s = score(pool[i], q);
+    if (s > 0) scored.push({d: pool[i], s: s});
   }
   scored.sort(function(a,b){return b.s - a.s;});
   var main = document.getElementById('main');
@@ -126,14 +130,16 @@ function doSearch() {
     main.innerHTML = '<div class="no-results"><div class="icon">🔍</div><p>"' + esc(q) + '"에 대한 결과 없음</p></div>';
     return;
   }
-  var html = '<div class="result-count">' + scored.length + '개 결과</div>';
+  var scopeLabel = currentSheet ? ' (' + currentSheet + ' 내)' : '';
+  var html = '<div class="result-count">' + scored.length + '개 결과' + scopeLabel + '</div>';
   for (var i = 0; i < scored.length; i++) html += renderCard(scored[i].d, q);
   main.innerHTML = html;
 }
 function clearSearch() {
   document.getElementById('searchInput').value = '';
   document.getElementById('searchClear').style.display = 'none';
-  showHome();
+  if (currentSheet) showSheet(currentSheet);
+  else showHome();
 }
 window.addEventListener('popstate', function(e) {
   var s = e.state;
@@ -144,6 +150,7 @@ window.addEventListener('popstate', function(e) {
   } else if (s.view === 'sheet') {
     document.getElementById('searchInput').value = '';
     document.getElementById('searchClear').style.display = 'none';
+    currentSheet = s.name;
     showSheet(s.name, true);
   }
 });

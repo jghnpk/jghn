@@ -62,7 +62,7 @@ function getRandom10() {
     var j = Math.floor(Math.random() * (i + 1));
     var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
   }
-  return arr.slice(0, 10);
+  return arr.slice(0, 20);
 }
 function sheetKey(s) {
   return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
@@ -93,7 +93,7 @@ function showHome(fromPop) {
   document.getElementById('main').innerHTML =
     gridHtml +
     '<div class="section-hd">' +
-      '<span>오늘의 단어 10</span>' +
+      '<span>오늘의 단어 20</span>' +
       '<button class="refresh-btn" onclick="showHome()">🔀 새로고침</button>' +
     '</div>' +
     cardsHtml;

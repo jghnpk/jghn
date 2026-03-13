@@ -21,7 +21,6 @@ header{background:linear-gradient(135deg,#7a1e2e 0%,#9b2335 50%,#b32a3e 100%);co
 .hbtn{padding:5px 12px;border-radius:16px;border:none;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
 .hbtn-outline{background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.28)}
 .hbtn-outline.off{opacity:0.45}
-.ai-badge{font-size:10px;background:rgba(255,180,190,0.2);color:#ffcdd5;border:1px solid rgba(255,180,190,0.3);padding:4px 9px;border-radius:12px}
 .update-info{font-size:10px;color:rgba(255,255,255,0.4);margin-left:auto}
 
 /* ── Main ── */
@@ -47,7 +46,6 @@ main{max-width:680px;margin:0 auto;padding:16px 12px 80px}
 .card-header{display:flex;align-items:center;gap:6px;margin-bottom:10px}
 .sheet-tag{font-size:10px;background:#fceef0;color:#9b2335;padding:3px 8px;border-radius:8px;font-weight:600}
 .type-tag{font-size:10px;color:#8e8e93;flex:1}
-.ai-dot{width:6px;height:6px;border-radius:50%;background:#b32a3e;flex-shrink:0}
 .langs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .lang-box{background:#fdf5f6;border-radius:10px;padding:9px 10px}
 .lang-label{font-size:9px;font-weight:700;color:#b09090;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px}
@@ -122,7 +120,6 @@ mark{background:#ffd6da;border-radius:2px;padding:0 1px}
   .modal-overlay{background:rgba(0,0,0,0.65)}
   .no-results{color:#7a5055}
   .type-tag{color:#7a5055}
-  .ai-dot{background:#e07080}
   .result-count{color:#7a5055}
   .fab{background:linear-gradient(135deg,#b32a3e,#8f1e30);box-shadow:0 4px 16px rgba(179,42,62,0.5)}
 }
@@ -138,8 +135,6 @@ mark{background:#ffd6da;border-radius:2px;padding:0 1px}
     </div>
   </div>
   <div class="header-row2">
-    <span class="ai-badge">🤖 AI 1164개</span>
-    <button class="hbtn hbtn-outline" id="aiToggleBtn" onclick="toggleAI()">AI표시 ON</button>
     <span class="update-info" id="updateInfo">2026-03-13 00:38</span>
   </div>
 </header>

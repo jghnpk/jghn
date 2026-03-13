@@ -44,7 +44,20 @@ main{max-width:680px;margin:0 auto;padding:16px 12px 80px}
 .result-count{font-size:12px;color:#8e8e93;margin-bottom:10px}
 .card{background:#fff;border-radius:14px;padding:14px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,0.07)}
 .card-header{display:flex;align-items:center;gap:6px;margin-bottom:10px}
-.sheet-tag{font-size:10px;background:#fceef0;color:#9b2335;padding:3px 8px;border-radius:8px;font-weight:600}
+.sheet-tag{font-size:10px;padding:3px 8px;border-radius:8px;font-weight:600;color:#fff}
+.st-krafton{background:#c0392b}
+.st-finance{background:#2980b9}
+.st-manda{background:#8e44ad}
+.st-legal{background:#16a085}
+.st-pharma{background:#d35400}
+.st-government{background:#27ae60}
+.st-technology{background:#2c3e50}
+.st-aesthetic{background:#e91e8c}
+.st-entertainment{background:#f39c12}
+.st-admkt{background:#00897b}
+.st-rocketnow{background:#e74c3c}
+.st-genai{background:#1565c0}
+.st-default{background:#7f8c8d}
 .type-tag{font-size:10px;color:#8e8e93;flex:1}
 .langs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .lang-box{background:#fdf5f6;border-radius:10px;padding:9px 10px}
@@ -98,7 +111,7 @@ mark{background:#ffd6da;border-radius:2px;padding:0 1px}
   .sheet-card:active{border-color:#d4364e}
   .refresh-btn{border-color:#4a2228;color:#8a6065}
   .card{background:#2a1215;box-shadow:0 1px 4px rgba(0,0,0,0.35)}
-  .sheet-tag{background:#3a181e;color:#e07080}
+  .sheet-tag{opacity:0.85}
   .lang-box{background:#220f12}
   .lang-label{color:#7a5055}
   .lang-text{color:#f5e8ea}

@@ -139,5 +139,15 @@ def main():
     open(out_path, 'w', encoding='utf-8').write(html)
     print(f"Built: {out_path} ({len(html):,} bytes)")
 
+    # favicon.svg 복사
+    import shutil
+    favicon_src = os.path.join(os.path.dirname(script_dir), 'favicon.svg')
+    favicon_dst = os.path.join(dist_dir, 'favicon.svg')
+    if os.path.exists(favicon_src):
+        shutil.copy2(favicon_src, favicon_dst)
+        print(f"Copied: favicon.svg")
+    else:
+        print("WARNING: favicon.svg not found in repo root")
+
 if __name__ == '__main__':
     main()

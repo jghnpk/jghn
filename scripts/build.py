@@ -8,13 +8,6 @@ from datetime import datetime, timezone, timedelta
 SHEET_ID = os.environ['SHEET_ID']
 API_KEY  = os.environ['API_KEY']
 
-# 시트 탭 이름 목록 (구글 시트의 탭 이름과 정확히 일치해야 함)
-SHEET_TABS = [
-    'KRAFTON', 'Finance', 'M&A', 'Justice', 'Pharma',
-    'Government', 'Technology', 'Aesthetic Surgery',
-    'Entertainment', 'AD&MKT', 'Rocket Now', 'Generative AI'
-]
-
 # 컬럼명 후보 (대소문자 변형 대응)
 COL = {
     'ja':       ['JA', 'ja'],
@@ -33,6 +26,17 @@ def find_col(row, cands):
         if c in row:
             return row[c]
     return ''
+
+def fetch_sheet_tabs():
+    """스프레드시트의 모든 탭 이름을 자동으로 가져옵니다."""
+    url = (
+        f"https://sheets.googleapis.com/v4/spreadsheets/{SHEET_ID}"
+        f"?key={API_KEY}&fields=sheets.properties.title"
+    )
+    resp = requests.get(url, timeout=30)
+    resp.raise_for_status()
+    data = resp.json()
+    return [s['properties']['title'] for s in data.get('sheets', [])]
 
 def fetch_sheet(tab_name):
     """Google Sheets API v4로 특정 탭 데이터를 가져옵니다."""
@@ -87,9 +91,13 @@ def process_rows(tab_name, rows):
     return result
 
 def main():
+    print("Fetching sheet tabs...")
+    sheet_tabs = fetch_sheet_tabs()
+    print(f"Found {len(sheet_tabs)} tabs: {sheet_tabs}")
+
     print("Fetching data from Google Sheets...")
     all_data = []
-    for tab in SHEET_TABS:
+    for tab in sheet_tabs:
         try:
             rows = fetch_sheet(tab)
             entries = process_rows(tab, rows)
@@ -106,7 +114,7 @@ def main():
 
     # 시트 옵션 HTML 생성
     sheet_options = '\n'.join(
-        f'<option value="{s}">{s}</option>' for s in SHEET_TABS
+        f'<option value="{s}">{s}</option>' for s in sheet_tabs
     )
 
     # 템플릿 로드

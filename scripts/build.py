@@ -11,8 +11,8 @@ API_KEY  = os.environ['API_KEY']
 # 시트 탭 이름 목록 (구글 시트의 탭 이름과 정확히 일치해야 함)
 SHEET_TABS = [
     'KRAFTON', 'Finance', 'M&A', 'Justice', 'Pharma',
-    'Government', 'Technology', 'Aesthetic Surgery ',
-    'Entertainment', 'AD_MKT', 'Rocket Now', 'Genarative AI'
+    'Government', 'Technology', 'Aesthetic Surgery',
+    'Entertainment', 'AD&MKT', 'Rocket Now', 'Generative AI'
 ]
 
 # 컬럼명 후보 (대소문자 변형 대응)
